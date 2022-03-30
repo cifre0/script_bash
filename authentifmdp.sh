@@ -1,7 +1,7 @@
 #!/bin/bash
 
-file="/etc/ssh/ssh_config"
-# file="test"
+#file="/etc/ssh/ssh_config"
+ file="test"
 allow="PasswordAuthentication yes"
 notAllow="PasswordAuthentication no"
 
@@ -11,13 +11,16 @@ notAllow="PasswordAuthentication no"
 
 function autorise() {
         change=$(grep -r "PasswordAuthentication" $file)
+        countline=$(grep -r "PasswordAuthentication" $file | wc -l)
+
         if [ -z "$change" ]
         then
-              echo "PasswordAuthentication yes" >> $file
-              echo "le paramètre a été rajouté au fichier de configuration"
+                echo "PasswordAuthentication yes" >> $file
+                echo -e "le paramètre a été rajouté au fichier de configuration"
         else
-              sed -i "s/""$change""/$allow/g" $file
-              echo "le fichier a été modifié pour autoriser l'authentification par mot de passe"
+                grep -r "PasswordAuthentication" $file | while IFS= read -r line; do sed -i "/""$line""/,+d" $file ; done
+                echo "PasswordAuthentication yes" >> $file
+                echo -e "le fichier a été modifié pour autoriser l'authentification par mot de passe"
         fi
         }
 
@@ -27,13 +30,15 @@ function autorise() {
 
 function notAutorise() {
         change=$(grep -r "PasswordAuthentication" $file)
-        echo "$change"
+        countline=$(grep -r "PasswordAuthentication" $file | wc -l)
+
         if [ -z "$change" ]
         then
               echo "PasswordAuthentication no" >> $file
               echo "le pramètre a été rajouté au fichier de configuration"
         else
-              sed -i "s/""$change""/$notAllow/g" $file
+              grep -r "PasswordAuthentication" $file | while IFS= read -r line; do sed -i "/""$line""/,+d" $file ; done
+              echo "PasswordAuthentication no" >> $file
               echo "le fichier a été modifié pour ne pas autoriser l'authentification par mot de passe"
         fi
 }
