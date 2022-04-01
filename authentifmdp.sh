@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#file="/etc/ssh/ssh_config"
- file="test"
+file="/etc/ssh/sshd_config"
+# file="test"
 allow="PasswordAuthentication yes"
 notAllow="PasswordAuthentication no"
 
@@ -10,15 +10,15 @@ notAllow="PasswordAuthentication no"
 ##########################################
 
 function autorise() {
-        change=$(grep -r "PasswordAuthentication" $file)
-        countline=$(grep -r "PasswordAuthentication" $file | wc -l)
+        change=$(grep -r "PasswordAuthentication " $file)
+        countline=$(grep -r "PasswordAuthentication " $file | wc -l)
 
         if [ -z "$change" ]
         then
                 echo "PasswordAuthentication yes" >> $file
                 echo -e "le paramètre a été rajouté au fichier de configuration"
         else
-                grep -r "PasswordAuthentication" $file | while IFS= read -r line; do sed -i "/""$line""/,+d" $file ; done
+                grep -r "PasswordAuthentication " $file | while IFS= read -r line; do sed -i "/""$line""/,+d" $file ; done
                 echo "PasswordAuthentication yes" >> $file
                 echo -e "le fichier a été modifié pour autoriser l'authentification par mot de passe"
         fi
@@ -29,15 +29,15 @@ function autorise() {
 ##########################################
 
 function notAutorise() {
-        change=$(grep -r "PasswordAuthentication" $file)
-        countline=$(grep -r "PasswordAuthentication" $file | wc -l)
+        change=$(grep -r "PasswordAuthentication " $file)
+        countline=$(grep -r "PasswordAuthentication " $file | wc -l)
 
         if [ -z "$change" ]
         then
               echo "PasswordAuthentication no" >> $file
               echo "le pramètre a été rajouté au fichier de configuration"
         else
-              grep -r "PasswordAuthentication" $file | while IFS= read -r line; do sed -i "/""$line""/,+d" $file ; done
+              grep -r "PasswordAuthentication " $file | while IFS= read -r line; do sed -i "/""$line""/,+d" $file ; done
               echo "PasswordAuthentication no" >> $file
               echo "le fichier a été modifié pour ne pas autoriser l'authentification par mot de passe"
         fi
@@ -53,7 +53,7 @@ do
 echo "dsl vous n'avez pas donné la bonne reponse. Répondez par 'y' ou 'n'"
 
 echo -n "
-Voulez-vous enlever l'authentification par mot de passe:
+Voulez-vous mettre l'authentification par mot de passe:
 "
 read reponse
 
@@ -61,12 +61,14 @@ done
 }
 
 
+
+
 #########################################
 ## Debut du script                      #
 #########################################
 
 echo -n "
-Voulez-vous enlever l'authentification par mot de passe:
+Voulez-vous mettre l'authentification par mot de passe:
 "
 read reponse
 
@@ -78,3 +80,5 @@ then
 else
         notAutorise
 fi
+
+/etc/init.d/ssh restart
